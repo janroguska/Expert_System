@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-import sys, parse_file, tools
+import sys, parse_file, tools, global_variables
 
 def main(av):
 	if len(av) != 2:

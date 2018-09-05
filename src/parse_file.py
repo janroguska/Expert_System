@@ -12,16 +12,30 @@
 
 import global_variables, tools
 
+def checkStatementValidity(conclusion, rule):
+	for index, elem in enumerate(conclusion):
+		if ((elem.isalpha() and index % 2 == 1)
+			or (elem.isalpha == False and index % 2 == 0)
+				or (elem == "=>" or elem == "<=>")):
+			return False
+	for index, elem in enumerate(rule):
+		if ((elem.isalpha() and index % 2 == 1)
+			or (elem.isalpha == False and index % 2 == 0)):
+			return False
+	return True
+
 def addToStatements(statement):
 	string = statement.split()
 	temp_object = global_variables.statementObject()
 	for index, elem in enumerate(string):
 		if elem == "=>" or elem == "<=>":
 			temp_object.connective = elem
+			if checkStatementValidity(string[index + 1:], string[:index]) == False:
+				tools.error("syntax error")
 			temp_object.then = string[index + 1:]
 			temp_object.rule = string[:index]
+			print temp_object.rule
 			global_variables.statement_dict["statements"].append(temp_object)
-			print temp_object.connective, temp_object.then, temp_object.rule
 			return
 		if ((elem.isalpha() == False or len(elem) > 1) and elem != "|" and elem != "+"
 			and elem != "^" and elem != "^" and elem.startswith("!")
