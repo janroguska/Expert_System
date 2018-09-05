@@ -14,12 +14,12 @@ import global_variables, tools
 
 def checkStatementValidity(conclusion, rule):
 	for index, elem in enumerate(conclusion):
-		if ((elem.isalpha() and index % 2 == 1)
+		if ((elem.isalpha() and elem.isupper() and index % 2 == 1)
 			or (elem.isalpha == False and index % 2 == 0)
 				or (elem == "=>" or elem == "<=>")):
 			return False
 	for index, elem in enumerate(rule):
-		if ((elem.isalpha() and index % 2 == 1)
+		if ((elem.isalpha() and elem.isupper() and index % 2 == 1)
 			or (elem.isalpha == False and index % 2 == 0)):
 			return False
 	return True
@@ -37,7 +37,7 @@ def addToStatements(statement):
 			print temp_object.rule
 			global_variables.statement_dict["statements"].append(temp_object)
 			return
-		if ((elem.isalpha() == False or len(elem) > 1) and elem != "|" and elem != "+"
+		if ((elem.isalpha() == False or elem.isupper() == False or len(elem) > 1) and elem != "|" and elem != "+"
 			and elem != "^" and elem != "^" and elem.startswith("!")
 				== False and elem.startswith("(") == False and
 					elem.endswith(")") == False or len(elem) > 2):
@@ -47,7 +47,7 @@ def addToStatements(statement):
 def addToDefinedValues(statement):
 	string = statement[1:-1]
 	for i in string:
-		if i.isalpha():
+		if i.isalpha() and i.isupper():
 			global_variables.statement_dict["defined_values"].append(i)
 		else:
 			tools.error("syntax error")
