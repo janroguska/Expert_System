@@ -12,6 +12,50 @@
 
 import global_variables, tools
 
+def populateNode(value, rule, obj, connective, i):
+	global_variables.statement_dict[value].rules.append(obj)
+	j = len(global_variables.statement_dict[value].rules) - 1
+	print (global_variables.statement_dict[value].rules)
+	for index, elem in enumerate(rule[i:]):
+		if (elem.isalpha() == False and elem != connective and
+			elem.startswith("!") == False):
+			break
+		if elem.isalpha() or elem.startswith("!"):
+			if elem.startswith("!"):
+				global_variables.statement_dict[value].rules[j].values.append(rule[i:][index])
+				global_variables.statement_dict[value].rules[j].negated.append(0)
+			elif elem.isalpha():
+				global_variables.statement_dict[value].rules[j].values.append(elem)
+				global_variables.statement_dict[value].rules[j].negated.append(1)
+	return len(global_variables.statement_dict[value].rules[j].values)	
+
+def populateDict(rule, fact, i):
+	if global_variables.statement_dict[fact[i].replace("!", "")] == None:
+		temp_object = global_variables.factObject()
+		temp_object.value = fact[i].replace("!", "")
+		if fact[i].startswith("!"):
+			temp_object.negated = 0
+		else:
+			temp_object.negated = 1
+		global_variables.statement_dict[fact[i].replace("!", "")] = temp_object
+		if (i < len(fact) - 1):
+			i += 2
+			populateDict(rule, fact, i)
+			return
+	x = 0
+	while x < len(rule):
+		if rule[x] == "+":
+			y = populateNode(fact[i].replace("!", ""), rule, global_variables.AndNode(), "+", x - 1)
+			x += y
+		elif rule[x] == "|":
+			y = populateNode(fact[i].replace("!", ""), rule, global_variables.OrNode(), "|", x - 1)
+			x += y
+		elif rule[x] == "^":
+			y = populateNode(fact[i].replace("!", ""), rule, global_variables.XorNode(), "^", x - 1)
+			x += y
+		else:
+			x += 1
+
 def checkStatementValidity(conclusion, rule):
 	for index, elem in enumerate(conclusion):
 		if ((elem.isalpha() and elem.isupper() and index % 2 == 1)
@@ -26,31 +70,30 @@ def checkStatementValidity(conclusion, rule):
 
 def addToStatements(statement):
 	string = statement.split()
-	temp_object = global_variables.statementObject()
 	for index, elem in enumerate(string):
 		if elem == "=>" or elem == "<=>":
-			temp_object.connective = elem
 			if checkStatementValidity(string[index + 1:], string[:index]) == False:
 				tools.error("syntax error")
-			temp_object.then = string[index + 1:]
-			temp_object.rule = string[:index]
-			print temp_object.rule
-			global_variables.statement_dict["statements"].append(temp_object)
+			populateDict(string[:index], string[index + 1:], 0)
 			return
-		if ((elem.isalpha() == False or elem.isupper() == False or len(elem) > 1) and elem != "|" and elem != "+"
-			and elem != "^" and elem != "^" and elem.startswith("!")
-				== False and elem.startswith("(") == False and
-					elem.endswith(")") == False or len(elem) > 2):
+		if (((elem.isalpha() == False or elem.isupper() == False or len(elem) > 1)
+			and elem != "|" and elem != "+"
+				and elem != "^" and elem != "^" and elem.startswith("!")
+					== False and elem.startswith("(") == False and
+						elem.endswith(")") == False or len(elem) > 2)
+							and (elem.startswith("(!") == False
+								and elem.startswith("!(") == False or len(elem) > 3)):
 			tools.error("syntax error")
 	tools.error("syntax error")
 
 def addToDefinedValues(statement):
-	string = statement[1:-1]
-	for i in string:
-		if i.isalpha() and i.isupper():
-			global_variables.statement_dict["defined_values"].append(i)
-		else:
-			tools.error("syntax error")
+	pass
+	# string = statement[1:-1]
+	# for i in string:
+	# 	if i.isalpha() and i.isupper():
+	# 		global_variables.statement_dict["defined_values"].append(i)
+	# 	else:
+	# 		tools.error("syntax error")
 
 def addToToFind(statement):
 	string = statement[1:-1]

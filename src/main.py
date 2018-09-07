@@ -16,5 +16,8 @@ def main(av):
 	if len(av) != 2:
 		tools.error("incorrect number of arguments")
 	parse_file.parseFile(av[1])
+	# for elem in global_variables.statement_dict["X"].rules:
+	# 	print (elem.values)
+	print (global_variables.statement_dict["X"])
 
 main(sys.argv)

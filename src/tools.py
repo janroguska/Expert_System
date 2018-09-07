@@ -13,5 +13,5 @@
 import sys
 
 def error(i):
-	print i
+	print (i)
 	sys.exit()
